@@ -34,7 +34,7 @@ const chatController = (socket: FakeSOSocket) => {
   const isCreateChatRequestValid = (req: CreateChatRequest): boolean => {
     // TODO: Task 3 - Implement the isCreateChatRequestValid function.
     const { participants, messages } = req.body;
-    return Array.isArray(participants) && participants.length > 0 && !!participants && !!messages;
+    return Array.isArray(participants) && participants.length > 0 && !!messages && !!participants;
   };
 
   /**
@@ -199,12 +199,12 @@ const chatController = (socket: FakeSOSocket) => {
       );
 
       if (populatedChats.some(chat => 'error' in chat)) {
-        throw new Error('Failed to populate all fetched chats');
+        throw new Error('Failed populating chats');
       }
 
       res.json(populatedChats);
     } catch (err: unknown) {
-      res.status(500).send(`Error occurred while retrieving chats: ${(err as Error).message}`);
+      res.status(500).send(`Error retrieving chat: ${(err as Error).message}`);
     }
   };
 
