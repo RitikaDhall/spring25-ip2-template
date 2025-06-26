@@ -299,6 +299,11 @@ describe('Test userController', () => {
     });
 
     // TODO: Task 1 - Add more tests
+    it('should return 500 if user retrieval fails due to DB error', async () => {
+      getUsersListSpy.mockResolvedValueOnce({ error: 'Error occurred while retrieving users' });
+      const response = await supertest(app).get(`/user/getUsers`);
+      expect(response.status).toBe(500);
+    });
   });
 
   describe('DELETE /deleteUser', () => {
@@ -349,5 +354,38 @@ describe('Test userController', () => {
     });
 
     // TODO: Task 1 - Add more tests
+    it('should return 400 if username is missing from request body', async () => {
+      const mockReqBody = {
+        biography: 'This is my new bio',
+      };
+
+      const response = await supertest(app).patch('/user/updateBiography').send(mockReqBody);
+
+      expect(response.status).toBe(400);
+      expect(response.text).toEqual('Invalid request body');
+    });
+
+    it('should return 400 if biography is missing from request body', async () => {
+      const mockReqBody = {
+        username: mockUser.username,
+      };
+
+      const response = await supertest(app).patch('/user/updateBiography').send(mockReqBody);
+
+      expect(response.status).toBe(400);
+      expect(response.text).toEqual('Invalid request body');
+    });
+
+    it('should return 500 if there is a DB error while updating user', async () => {
+      const mockReqBody = {
+        username: mockUser.username,
+        biography: 'This is my new bio',
+      };
+
+      updatedUserSpy.mockResolvedValueOnce({ error: 'Error occurred while updating the user' });
+      const response = await supertest(app).patch('/user/updateBiography').send(mockReqBody);
+
+      expect(response.status).toBe(500);
+    });
   });
 });

@@ -36,17 +36,41 @@ const NimGamePage = ({ gameState }: { gameState: GameInstance }) => {
           - Remaining Objects: The number of objects remaining in the pile.
           - Winner: The winner of the game, or "No winner" if the winner is not defined. (Conditionally rendered)
         */}
+        <p>Player 1: {gameState.state.player1 || 'Waiting...'}</p>
+        <p>Player 2: {gameState.state.player2 || 'Waiting...'}</p>
+        <p>Current Player to Move: {gameState.players[gameState.state.moves.length % 2]}</p>
+        <p>Remaining Objects: {gameState.state.remainingObjects}</p>
+        {gameState.state.status === 'OVER' && (
+          <p>
+            <strong>Winner:</strong> {gameState.state.winners?.join(', ') || 'No winner'}
+          </p>
+        )}
         {/* TODO: Task 2 - Conditionally render game move input for an in progress game */}
-        {
+        {gameState.state.status === 'IN_PROGRESS' && (
           <div className='nim-game-move'>
             <h3>Make Your Move</h3>
             {/* TODO: Task 2 - Implement the input field which takes a number input.
             Use the class name 'input-move' for styling. */}
+            <input
+              type='number'
+              className='input-move'
+              value={move || ''}
+              onChange={handleInputChange}
+              min='1'
+              max='3'
+              placeholder='Enter number of objects (1-3)'
+            />
             {/* TODO: Task 2 - Implement the submit button which submits the entered move.
             The button should be disabled if it is not the user's turn.
             Use the class name 'btn-submit' for styling. */}
+            <button
+              className='btn-submit'
+              onClick={handleMakeMove}
+              disabled={gameState.players[gameState.state.moves.length % 2] !== user.username}>
+              Submit Move
+            </button>
           </div>
-        }
+        )}
       </div>
     </>
   );

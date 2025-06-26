@@ -91,6 +91,17 @@ describe('getUsersList', () => {
   });
 
   // TODO: Task 1 - Add more tests for getUsersList
+  it('should throw an error if no users found', async () => {
+    mockingoose(UserModel).toReturn(null, 'find');
+    const result = await getUsersList();
+    expect('error' in result).toBe(true);
+  });
+
+  it('should throw an error if retrieval fails due to DB error', async () => {
+    mockingoose(UserModel).toReturn(new Error('Error occurred while retrieving users'), 'find');
+    const result = await getUsersList();
+    expect('error' in result).toBe(true);
+  });
 });
 
 describe('loginUser', () => {
